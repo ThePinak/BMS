@@ -1,0 +1,46 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Task:
+// 1. Configure Prisma for PostgreSQL.
+// 2. Create an Account model.
+// 3. Create a Transaction model.
+// 4. Add a relation between Account and Transaction.
+// 5. Store balance on Account.
+// 6. Store transaction type, amount, and timestamps.
+
+model Account {
+  id        String       @id @default(uuid())
+  name      String
+  email     String       @unique
+  balance   Decimal      @default(0) @db.Decimal(12, 2)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  transactions Transaction[]
+
+  @@map("accounts")
+}
+
+model Transaction {
+  id        String   @id @default(uuid())
+  type      String   // "DEBIT" or "CREDIT"
+  amount    Decimal  @db.Decimal(12, 2)
+  createdAt DateTime @default(now())
+
+  accountId String
+  account   Account  @relation(fields: [accountId], references: [id])
+
+  @@map("transactions")
+}
