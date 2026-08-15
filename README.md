@@ -1,20 +1,17 @@
-## Phase 2 Completed
+## Phase 3A Completed
 
-Phase 2 sets up the database foundation of the project using PostgreSQL and Prisma.
+Phase 3A adds the first real banking account APIs.
 
 ### What is done
-- Installed and configured PostgreSQL
-- Installed Prisma and Prisma Client
-- Initialized Prisma in the backend
-- Created the `Account` model
-- Created the `Transaction` model
-- Added relationship between `Account` and `Transaction`
-- Configured Prisma client connection
-- Created and ran the initial database migration
-- Verified database connectivity using a test script
+- Added account validation using Zod
+- Added account repository layer for Prisma queries
+- Added account service layer for business rules
+- Added account controller layer
+- Added create account API
+- Added get all accounts API
+- Added get single account API
 
 ### Current status
-- Backend is connected to PostgreSQL
-- Prisma schema is working correctly
-- Initial migration has been created and applied
-- Project is ready for Phase 3: banking APIs implementation
+- Accounts can now be created and fetched from PostgreSQL
+- Duplicate email accounts are blocked
+- Project is ready for transaction-related banking operations next
