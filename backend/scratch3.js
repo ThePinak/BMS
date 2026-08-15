@@ -5,4 +5,4 @@ const schema = z.object({
   balance: z.number().min(0)
 });
 const result = schema.safeParse({ name: "R" });
-console.log( "Error" + JSON.stringify(result.error.issues));
+console.log(result.error?.issues[0]?.message);
