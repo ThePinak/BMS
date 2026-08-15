@@ -1,8 +1,3 @@
-// Task:
-// 1. Import PrismaClient from @prisma/client.
-// 2. Create one Prisma client instance.
-// 3. Export that instance.
-// 4. This file will be reused by services and repositories later.
 import 'dotenv/config';
 import pg from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
@@ -11,9 +6,18 @@ import pkg from '@prisma/client';
 const { PrismaClient } = pkg;
 const { Pool } = pg;
 
+console.log("URL:", process.env.DATABASE_URL);
+
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-// FIX: Pass the pool directly, NOT as an object { pool }
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
-export default prisma;
+async function test() {
+    try {
+        const users = await prisma.account.findMany();
+        console.log("Connected successfully via PrismaPg!");
+    } catch (e) {
+        console.error("Prisma Error:", e);
+    }
+}
+test();

@@ -10,6 +10,7 @@
 import express from 'express';
 import cors from 'cors';
 import healthRoutes from './routes/health.routes.js';
+import accountRoutes from './routes/account.routes.js';
 
 const app = express();
 
@@ -17,10 +18,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/health', healthRoutes);
+app.use('/api/accounts', accountRoutes);
 
 app.get('/',(req,res)=>{
     res.status(200).json({
-        msg:"Welcome JPMorganChase Intern Pinak Thummar"
+        msg:"Welcome JPMorganChase Intern 2026 Pinak Thummar"
     })
 });
 
