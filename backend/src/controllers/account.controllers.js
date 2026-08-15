@@ -8,11 +8,11 @@
 // 7. Return proper HTTP status codes and JSON responses.
 
 import accountService from "../services/account.services.js";
-import accountValidator from "../validators/account.validator.js";
+import { createAccountSchema, accountIdParamSchema } from "../validators/account.validator.js";
 
 const createAccountController = async(req,res)=>{
     try{
-        const validationResult = accountValidator.safeParse(req.body);
+        const validationResult = createAccountSchema.safeParse(req.body);
         if(!validationResult.success){
             return res.status(400).json({
                 success:false,
@@ -54,7 +54,7 @@ const getAllAccountsController = async(req,res)=>{
 
 const getAccountByIdController = async(req,res)=>{
     try{
-        const validationResult = accountValidator.safeParse(req.params);
+        const validationResult = accountIdParamSchema.safeParse(req.params);
         if(!validationResult.success){
             return res.status(400).json({
                 success:false,
@@ -69,6 +69,12 @@ const getAccountByIdController = async(req,res)=>{
         });
     }
     catch(error){
+        if (error.message === "Account not found") {
+            return res.status(404).json({
+                success:false,
+                message:error.message
+            });
+        }
         return res.status(400).json({
             success:false,
             message:error.message

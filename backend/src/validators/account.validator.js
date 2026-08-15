@@ -5,12 +5,14 @@
 // 4. Export the schema.
 // 5. Keep balance default-friendly and prevent negative values.
 
-import zod from 'zod';
+import { z } from "zod";
 
-const accountCreationSchema = zod.object({
-    name: zod.string({ required_error: "Name is required" }).min(3,"Name must be at least 3 characters long"),
-    email: zod.string({required_error: "Email is required" }).email(),
-    balance: zod.number({required_error: "Balance is required" }).min(0, "Balance cannot be negative").optional().default(0)
-})
+export const createAccountSchema = z.object({
+  name: z.string().min(3, "Name must be at least 3 characters long"),
+  email: z.string().email("Valid email is required"),
+  balance: z.number().min(0, "Balance cannot be negative").optional().default(0)
+});
 
-export default accountCreationSchema;
+export const accountIdParamSchema = z.object({
+  id: z.string().uuid("Valid account id is required")
+});
