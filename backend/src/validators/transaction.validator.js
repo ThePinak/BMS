@@ -22,7 +22,6 @@ export const amountSchema = z.object({
 });
 
 export const transferSchema = z.object({
-    fromAccountId: z.string().uuid(),
-    toAccountId: z.string().uuid(),
-    amount: z.number().positive(),
+    toAccountId: z.string().uuid("Valid destination account id is required"),
+    amount: z.number().positive("Amount must be positive")
 });

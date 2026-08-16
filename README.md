@@ -1,15 +1,15 @@
-## Phase 4 Completed
+## Phase 5 Completed
 
-Phase 4 improves backend structure by centralizing error handling.
+Phase 5 secures the API with authentication and JWT-based authorization.
 
 ### What is done
-- Added custom AppError class
-- Added centralized error middleware
-- Refactored services to throw structured errors
-- Refactored controllers to forward service errors to middleware
-- Standardized API error responses
+- Added secure password hashing using bcryptjs
+- Implemented stateless JWT authentication for login sessions
+- Created custom `authMiddleware` to protect financial routes
+- Refactored routes to remove vulnerable URL parameters (Option A logic)
+- Secured transactions so users can only access their own accounts
 
 ### Current status
-- Backend error handling is now cleaner and more maintainable
-- Controllers are simpler
-- Project is better prepared for testing and CI/CD
+- The backend API is now fully secured and authenticated
+- Money operations require valid Bearer tokens
+- The backend is complete and ready to connect to a frontend application

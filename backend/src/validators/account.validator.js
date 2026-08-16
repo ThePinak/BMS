@@ -10,7 +10,13 @@ import { z } from "zod";
 export const createAccountSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters long"),
   email: z.string().email("Valid email is required"),
+  password: z.string().min(6, "Password must be at least 6 characters long"),
   balance: z.number().min(0, "Balance cannot be negative").optional().default(0)
+});
+
+export const loginSchema = z.object({
+  email: z.string().email("Valid email is required"),
+  password: z.string().min(1, "Password is required")
 });
 
 export const accountIdParamSchema = z.object({

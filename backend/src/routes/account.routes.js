@@ -7,22 +7,21 @@
 
 import express from 'express';
 import accountController from '../controllers/account.controllers.js';
+import { authMiddleware } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.post('/',accountController.createAccountController);
-router.get('/',accountController.getAllAccountsController);
-router.get('/:id',accountController.getAccountByIdController);
+// Public endpoints
+router.post('/register', accountController.createAccountController);
+router.post('/login', accountController.loginController);
 
-// Task:
-// 1. Add POST /:id/deposit route.
-// 2. Add POST /:id/withdraw route.
-// 3. Add POST /transfer route.
-// 4. Add GET /:id/transactions route.
+// Protected endpoints
+router.get('/', authMiddleware, accountController.getAllAccountsController);
+router.get('/me', authMiddleware, accountController.getAccountByIdController);
 
-router.post('/:id/deposit', accountController.depositController);
-router.post('/:id/withdraw', accountController.withdrawController);
-router.post('/transfer', accountController.transferController);
-router.get('/:id/transactions', accountController.getTransactionHistoryController);
+router.post('/deposit', authMiddleware, accountController.depositController);
+router.post('/withdraw', authMiddleware, accountController.withdrawController);
+router.post('/transfer', authMiddleware, accountController.transferController);
+router.get('/transactions', authMiddleware, accountController.getTransactionHistoryController);
 
 export default router;

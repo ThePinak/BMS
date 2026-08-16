@@ -14,7 +14,7 @@
 // 4. Remove repeated manual error response handling where middleware can handle it.
 
 import accountService from "../services/account.services.js";
-import { createAccountSchema, accountIdParamSchema } from "../validators/account.validator.js";
+import { createAccountSchema, loginSchema } from "../validators/account.validator.js";
 import { amountSchema, transferSchema } from "../validators/transaction.validator.js";
 
 const createAccountController = async(req, res, next)=>{
@@ -26,8 +26,8 @@ const createAccountController = async(req, res, next)=>{
                 message:validationResult.error.issues[0].message
             });
         }
-        const { name, email, balance } = validationResult.data;
-        const account = await accountService.createAccountService(name, email, balance);
+        const { name, email, password, balance } = validationResult.data;
+        const account = await accountService.createAccountService(name, email, password, balance);
         return res.status(201).json({
             success:true,
             message:"Account created successfully",
@@ -35,6 +35,27 @@ const createAccountController = async(req, res, next)=>{
         });
     }
     catch(error){
+        next(error);
+    }
+}
+
+const loginController = async (req, res, next) => {
+    try {
+        const validationResult = loginSchema.safeParse(req.body);
+        if(!validationResult.success){
+            return res.status(400).json({
+                success:false,
+                message:validationResult.error.issues[0].message
+            });
+        }
+        const { email, password } = validationResult.data;
+        const result = await accountService.loginService(email, password);
+        return res.status(200).json({
+            success: true,
+            message: "Login successful",
+            data: result
+        });
+    } catch (error) {
         next(error);
     }
 }
@@ -55,14 +76,8 @@ const getAllAccountsController = async(req, res, next)=>{
 
 const getAccountByIdController = async(req, res, next)=>{
     try{
-        const validationResult = accountIdParamSchema.safeParse(req.params);
-        if(!validationResult.success){
-            return res.status(400).json({
-                success:false,
-                message:validationResult.error.issues[0].message
-            });
-        }
-        const account = await accountService.getAccountByIdService(validationResult.data.id);
+        // Using req.user.id for security instead of params
+        const account = await accountService.getAccountByIdService(req.user.id);
         return res.status(200).json({
             success:true,
             message:"Account fetched successfully",
@@ -74,21 +89,9 @@ const getAccountByIdController = async(req, res, next)=>{
     }
 }
 
-// Task:
-// 1. Import transaction validators.
-// 2. Add deposit controller.
-// 3. Add withdraw controller.
-// 4. Add transfer controller.
-// 5. Add transaction history controller.
-// 6. Return proper JSON responses and status codes.
-
 // Controller for depositing money
 const depositController = async (req, res, next) => {
     try {
-        const paramValidation = accountIdParamSchema.safeParse(req.params);
-        if (!paramValidation.success) {
-            return res.status(400).json({ success: false, message: paramValidation.error.issues[0].message });
-        }
         const validationResult = amountSchema.safeParse(req.body);
         if (!validationResult.success) {
             return res.status(400).json({
@@ -97,7 +100,7 @@ const depositController = async (req, res, next) => {
             });
         }
         const { amount } = validationResult.data;
-        const account = await accountService.depositService(req.params.id, amount);
+        const account = await accountService.depositService(req.user.id, amount);
         return res.status(200).json({
             success: true,
             message: "Deposit successful",
@@ -112,10 +115,6 @@ const depositController = async (req, res, next) => {
 // Controller for withdrawing money
 const withdrawController = async (req, res, next) => {
     try {
-        const paramValidation = accountIdParamSchema.safeParse(req.params);
-        if (!paramValidation.success) {
-            return res.status(400).json({ success: false, message: paramValidation.error.issues[0].message });
-        }
         const validationResult = amountSchema.safeParse(req.body);
         if (!validationResult.success) {
             return res.status(400).json({
@@ -124,7 +123,7 @@ const withdrawController = async (req, res, next) => {
             });
         }
         const { amount } = validationResult.data;
-        const account = await accountService.withdrawService(req.params.id, amount);
+        const account = await accountService.withdrawService(req.user.id, amount);
         return res.status(200).json({
             success: true,
             message: "Withdrawal successful",
@@ -146,8 +145,8 @@ const transferController = async (req, res, next) => {
                 message: validationResult.error.issues[0].message
             });
         }
-        const { fromAccountId, toAccountId, amount } = validationResult.data;
-        const accounts = await accountService.transferService(fromAccountId, toAccountId, amount);
+        const { toAccountId, amount } = validationResult.data;
+        const accounts = await accountService.transferService(req.user.id, toAccountId, amount);
         return res.status(200).json({
             success: true,
             message: "Transfer successful",
@@ -162,11 +161,7 @@ const transferController = async (req, res, next) => {
 // Controller for getting transaction history
 const getTransactionHistoryController = async (req, res, next) => {
     try {
-        const paramValidation = accountIdParamSchema.safeParse(req.params);
-        if (!paramValidation.success) {
-            return res.status(400).json({ success: false, message: paramValidation.error.issues[0].message });
-        }
-        const transactions = await accountService.getTransactionHistoryService(req.params.id);
+        const transactions = await accountService.getTransactionHistoryService(req.user.id);
         return res.status(200).json({
             success: true,
             message: "Transaction history fetched successfully",
@@ -180,6 +175,7 @@ const getTransactionHistoryController = async (req, res, next) => {
 
 export default {
     createAccountController,
+    loginController,
     getAllAccountsController,
     getAccountByIdController,
     depositController,

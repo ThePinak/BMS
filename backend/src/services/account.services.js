@@ -13,20 +13,26 @@
 // 4. Keep service logic same, only improve error handling.
 import accountRepository from "../repositories/account.repositories.js";
 import AppError from "../utils/appError.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-const createAccountService = async(name,email,balance)=>{
+const createAccountService = async(name, email, password, balance)=>{
     try{
         const existingAccount = await accountRepository.getAccountByEmailRepository(email);
         if(existingAccount){
             throw new AppError("Account with this email already exists", 409);
         }
         else{
+            const hashedPassword = await bcrypt.hash(password, 10);
             const account = await accountRepository.createAccountRepository({
                 name:name,
                 email:email,
+                password: hashedPassword,
                 balance:balance
             });
-            return account;
+            // Don't return the password
+            const { password: _, ...accountWithoutPassword } = account;
+            return accountWithoutPassword;
         }
     }
     catch(error){
@@ -183,8 +189,34 @@ const getTransactionHistoryService = async (accountId) => {
     }
 }
 
+const loginService = async (email, password) => {
+    try {
+        const account = await accountRepository.getAccountByEmailRepository(email);
+        if (!account) {
+            throw new AppError("Invalid email or password", 401);
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, account.password);
+        if (!isPasswordValid) {
+            throw new AppError("Invalid email or password", 401);
+        }
+
+        const token = jwt.sign(
+            { id: account.id, email: account.email },
+            process.env.JWT_SECRET || "SUPER_SECRET_KEY_123",
+            { expiresIn: "1h" }
+        );
+
+        const { password: _, ...accountWithoutPassword } = account;
+        return { token, account: accountWithoutPassword };
+    } catch (error) {
+        throw error;
+    }
+}
+
 export default {
     createAccountService,
+    loginService,
     getAllAccountsService,
     getAccountByIdService,
     depositService,
