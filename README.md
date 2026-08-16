@@ -1,15 +1,15 @@
-## Phase 5 Completed
+## Phase 6 & 7 Completed
 
-Phase 5 secures the API with authentication and JWT-based authorization.
+Phases 6 and 7 cover the creation of the React frontend and its full integration with the Node.js backend.
 
 ### What is done
-- Added secure password hashing using bcryptjs
-- Implemented stateless JWT authentication for login sessions
-- Created custom `authMiddleware` to protect financial routes
-- Refactored routes to remove vulnerable URL parameters (Option A logic)
-- Secured transactions so users can only access their own accounts
+- Initialized a React SPA using Vite, React Router, and Tailwind CSS v4
+- Designed a custom "Swiss Minimalist" UI theme
+- Built an Auth Page with secure Login and Registration flows
+- Built a real-time Dashboard for viewing balances, transaction history, and processing transfers
+- Integrated an Axios API client with automatic JWT token management via interceptors
 
 ### Current status
-- The backend API is now fully secured and authenticated
-- Money operations require valid Bearer tokens
-- The backend is complete and ready to connect to a frontend application
+- The application is a fully functional, full-stack MVP
+- Real-time data flows seamlessly between the PostgreSQL database and the React UI
+- The core banking workflow (Register -> Login -> Deposit/Transfer) is complete and tested

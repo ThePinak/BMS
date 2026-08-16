@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@theme {
+  --color-brand-dark: #0f172a;
+  --color-brand: #1e293b;
+  --color-brand-light: #334155;
+  --color-brand-accent: #10b981;
+
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-surface-border: #e2e8f0;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --shadow-subtle: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+}
+
+@layer base {
+  body {
+    @apply bg-surface-alt text-brand-dark antialiased font-sans selection:bg-brand-accent selection:text-white;
+  }
+}
+
+@layer components {
+  /* Swiss Minimalist Buttons */
+  .btn-primary {
+    @apply bg-brand text-white px-6 py-2 rounded-sm font-medium transition-colors hover:bg-brand-dark focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface border border-surface-border text-brand px-6 py-2 rounded-sm font-medium transition-colors hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-surface-border focus:ring-offset-2;
+  }
+
+  /* Swiss Minimalist Cards */
+  .card {
+    @apply bg-surface border border-surface-border rounded-sm shadow-subtle p-6;
+  }
+
+  /* Swiss Minimalist Inputs */
+  .input-field {
+    @apply w-full border border-surface-border bg-surface px-4 py-2 rounded-sm focus:outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all;
+  }
+}
