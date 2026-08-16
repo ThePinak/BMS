@@ -1,53 +1,60 @@
-const test = async () => {
-    try {
-        const baseUrl = 'http://localhost:4000/api/accounts';
+const testErrors = async () => {
+    const baseUrl = 'http://localhost:4000/api/accounts';
 
-        console.log("1. Creating Account A...");
-        const resA = await fetch(baseUrl, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: "Account A", email: `a${Date.now()}@test.com` })
-        }).then(r => r.json());
-        const idA = resA.data.id;
-        console.log("Account A ID:", idA, "- Balance:", resA.data.balance);
+    console.log("=== Testing Validation Errors (Expected: 400) ===");
+    
+    // 1. Invalid email on creation
+    let res = await fetch(baseUrl, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: "Test", email: `invalid-email`, balance: 100 })
+    });
+    console.log(`Create with invalid email: Status ${res.status}`);
 
-        console.log("\n2. Creating Account B...");
-        const resB = await fetch(baseUrl, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: "Account B", email: `b${Date.now()}@test.com` })
-        }).then(r => r.json());
-        const idB = resB.data.id;
-        console.log("Account B ID:", idB, "- Balance:", resB.data.balance);
+    // 2. Negative balance
+    res = await fetch(baseUrl, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: "Test", email: `test@test.com`, balance: -100 })
+    });
+    console.log(`Create with negative balance: Status ${res.status}`);
 
-        console.log("\n3. Depositing 500 into A...");
-        const depA = await fetch(`${baseUrl}/${idA}/deposit`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 500 })
-        }).then(r => r.json());
-        console.log("Deposit A Success:", depA.success, "- New Balance:", depA.data?.balance);
+    // 3. Invalid UUID
+    res = await fetch(`${baseUrl}/bad-uuid-123`);
+    console.log(`Get with bad UUID: Status ${res.status}`);
 
-        console.log("\n4. Withdrawing 200 from A...");
-        const withA = await fetch(`${baseUrl}/${idA}/withdraw`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: 200 })
-        }).then(r => r.json());
-        console.log("Withdraw A Success:", withA.success, "- New Balance:", withA.data?.balance);
+    console.log("\n=== Testing Business Errors ===");
 
-        console.log("\n5. Transferring 150 from A to B...");
-        const trans = await fetch(`${baseUrl}/transfer`, {
-            method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fromAccountId: idA, toAccountId: idB, amount: 150 })
-        }).then(r => r.json());
-        console.log("Transfer Success:", trans.success);
-        console.log("Account A Balance:", trans.data?.fromAccount?.balance);
-        console.log("Account B Balance:", trans.data?.toAccount?.balance);
+    // First, let's create a valid account
+    const validEmail = `test_${Date.now()}@example.com`;
+    const acc = await fetch(baseUrl, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: "Test", email: validEmail, balance: 100 })
+    }).then(r => r.json());
+    const id = acc.data.id;
 
-        console.log("\n6. Fetching Transaction History for A...");
-        const histA = await fetch(`${baseUrl}/${idA}/transactions`).then(r => r.json());
-        console.log("Transactions for A:", histA.data?.length);
-        console.table(histA.data?.map(t => ({ type: t.type, amount: t.amount, date: t.createdAt })));
+    // 4. Duplicate Email (Expected: 409)
+    res = await fetch(baseUrl, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: "Test2", email: validEmail, balance: 100 })
+    });
+    console.log(`Create duplicate email: Status ${res.status} (Expected 409)`);
 
-    } catch (e) {
-        console.error("Test Error:", e);
-    }
+    // 5. Missing Account (Expected: 404)
+    res = await fetch(`${baseUrl}/00000000-0000-0000-0000-000000000000`);
+    console.log(`Get missing account: Status ${res.status} (Expected 404)`);
+
+    // 6. Insufficient Balance (Expected: 400)
+    res = await fetch(`${baseUrl}/${id}/withdraw`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 999999 })
+    });
+    console.log(`Withdraw exceeding balance: Status ${res.status} (Expected 400)`);
+
+    // 7. Transfer to Same Account (Expected: 400)
+    res = await fetch(`${baseUrl}/transfer`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fromAccountId: id, toAccountId: id, amount: 10 })
+    });
+    console.log(`Transfer to same account: Status ${res.status} (Expected 400)`);
 }
-test();
+
+testErrors().catch(console.error);

@@ -1,18 +1,15 @@
-## Phase 3B Completed
+## Phase 4 Completed
 
-Phase 3B adds money operations and transaction tracking.
+Phase 4 improves backend structure by centralizing error handling.
 
 ### What is done
-- Added deposit API
-- Added withdraw API
-- Added transfer API
-- Added transaction history API
-- Added balance update logic
-- Added transaction recording logic
-- Added validation for money operations
+- Added custom AppError class
+- Added centralized error middleware
+- Refactored services to throw structured errors
+- Refactored controllers to forward service errors to middleware
+- Standardized API error responses
 
 ### Current status
-- Accounts now support real money operations
-- Transfers update both source and destination accounts
-- Transaction history is stored in PostgreSQL
-- Project is ready for backend cleanup and better error handling next
+- Backend error handling is now cleaner and more maintainable
+- Controllers are simpler
+- Project is better prepared for testing and CI/CD

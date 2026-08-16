@@ -11,6 +11,7 @@ import express from 'express';
 import cors from 'cors';
 import healthRoutes from './routes/health.routes.js';
 import accountRoutes from './routes/account.routes.js';
+import errorMiddleware from './middleware/error.middleware.js';
 
 const app = express();
 
@@ -25,5 +26,11 @@ app.get('/',(req,res)=>{
         msg:"Welcome JPMorganChase Intern 2026 Pinak Thummar"
     })
 });
+
+// Task:
+// 1. Import error middleware.
+// 2. Register it after all routes.
+// 3. Keep it as the last middleware in app.js.
+app.use(errorMiddleware);
 
 export default app;

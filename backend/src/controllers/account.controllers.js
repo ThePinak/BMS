@@ -7,11 +7,17 @@
 // 6. Handle get single account request.
 // 7. Return proper HTTP status codes and JSON responses.
 
+// Task:
+// 1. Keep request validation in controllers.
+// 2. On validation failure, return 400 directly.
+// 3. For service errors, pass error to next(error).
+// 4. Remove repeated manual error response handling where middleware can handle it.
+
 import accountService from "../services/account.services.js";
 import { createAccountSchema, accountIdParamSchema } from "../validators/account.validator.js";
 import { amountSchema, transferSchema } from "../validators/transaction.validator.js";
 
-const createAccountController = async(req,res)=>{
+const createAccountController = async(req, res, next)=>{
     try{
         const validationResult = createAccountSchema.safeParse(req.body);
         if(!validationResult.success){
@@ -29,14 +35,11 @@ const createAccountController = async(req,res)=>{
         });
     }
     catch(error){
-        return res.status(400).json({
-            success:false,
-            message:error.message
-        });
+        next(error);
     }
 }
 
-const getAllAccountsController = async(req,res)=>{
+const getAllAccountsController = async(req, res, next)=>{
     try{
         const accounts = await accountService.getAllAccountsService();
         return res.status(200).json({
@@ -46,14 +49,11 @@ const getAllAccountsController = async(req,res)=>{
         });
     }
     catch(error){
-        return res.status(400).json({
-            success:false,
-            message:error.message
-        });
+        next(error);
     }
 }
 
-const getAccountByIdController = async(req,res)=>{
+const getAccountByIdController = async(req, res, next)=>{
     try{
         const validationResult = accountIdParamSchema.safeParse(req.params);
         if(!validationResult.success){
@@ -70,16 +70,7 @@ const getAccountByIdController = async(req,res)=>{
         });
     }
     catch(error){
-        if (error.message === "Account not found") {
-            return res.status(404).json({
-                success:false,
-                message:error.message
-            });
-        }
-        return res.status(400).json({
-            success:false,
-            message:error.message
-        });
+        next(error);
     }
 }
 
@@ -92,7 +83,7 @@ const getAccountByIdController = async(req,res)=>{
 // 6. Return proper JSON responses and status codes.
 
 // Controller for depositing money
-const depositController = async (req, res) => {
+const depositController = async (req, res, next) => {
     try {
         const paramValidation = accountIdParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
@@ -114,21 +105,12 @@ const depositController = async (req, res) => {
         });
     }
     catch (error) {
-        if (error.message === "Account not found") {
-            return res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        next(error);
     }
 }
 
 // Controller for withdrawing money
-const withdrawController = async (req, res) => {
+const withdrawController = async (req, res, next) => {
     try {
         const paramValidation = accountIdParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
@@ -150,21 +132,12 @@ const withdrawController = async (req, res) => {
         });
     }
     catch (error) {
-        if (error.message === "Account not found") {
-            return res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        next(error);
     }
 }
 
 // Controller for transferring money
-const transferController = async (req, res) => {
+const transferController = async (req, res, next) => {
     try {
         const validationResult = transferSchema.safeParse(req.body);
         if (!validationResult.success) {
@@ -182,21 +155,12 @@ const transferController = async (req, res) => {
         });
     }
     catch (error) {
-        if (error.message === "Account not found") {
-            return res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        next(error);
     }
 }
 
 // Controller for getting transaction history
-const getTransactionHistoryController = async (req, res) => {
+const getTransactionHistoryController = async (req, res, next) => {
     try {
         const paramValidation = accountIdParamSchema.safeParse(req.params);
         if (!paramValidation.success) {
@@ -210,16 +174,7 @@ const getTransactionHistoryController = async (req, res) => {
         });
     }
     catch (error) {
-        if (error.message === "Account not found") {
-            return res.status(404).json({
-                success: false,
-                message: error.message
-            });
-        }
-        return res.status(400).json({
-            success: false,
-            message: error.message
-        });
+        next(error);
     }
 }
 
