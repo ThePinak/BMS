@@ -14,4 +14,15 @@ router.post('/',accountController.createAccountController);
 router.get('/',accountController.getAllAccountsController);
 router.get('/:id',accountController.getAccountByIdController);
 
+// Task:
+// 1. Add POST /:id/deposit route.
+// 2. Add POST /:id/withdraw route.
+// 3. Add POST /transfer route.
+// 4. Add GET /:id/transactions route.
+
+router.post('/:id/deposit', accountController.depositController);
+router.post('/:id/withdraw', accountController.withdrawController);
+router.post('/transfer', accountController.transferController);
+router.get('/:id/transactions', accountController.getTransactionHistoryController);
+
 export default router;

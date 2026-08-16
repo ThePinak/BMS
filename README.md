@@ -1,17 +1,18 @@
-## Phase 3A Completed
+## Phase 3B Completed
 
-Phase 3A adds the first real banking account APIs.
+Phase 3B adds money operations and transaction tracking.
 
 ### What is done
-- Added account validation using Zod
-- Added account repository layer for Prisma queries
-- Added account service layer for business rules
-- Added account controller layer
-- Added create account API
-- Added get all accounts API
-- Added get single account API
+- Added deposit API
+- Added withdraw API
+- Added transfer API
+- Added transaction history API
+- Added balance update logic
+- Added transaction recording logic
+- Added validation for money operations
 
 ### Current status
-- Accounts can now be created and fetched from PostgreSQL
-- Duplicate email accounts are blocked
-- Project is ready for transaction-related banking operations next
+- Accounts now support real money operations
+- Transfers update both source and destination accounts
+- Transaction history is stored in PostgreSQL
+- Project is ready for backend cleanup and better error handling next
