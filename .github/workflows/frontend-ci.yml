@@ -1,4 +1,4 @@
-name: Backend CI
+name: Frontend CI
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./backend
+        working-directory: ./frontend
 
     steps:
       - name: Checkout Code
@@ -26,5 +26,5 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Generate Prisma Client
-        run: npx prisma generate
+      - name: Build React App (Vite)
+        run: npm run build
