@@ -203,7 +203,7 @@ const loginService = async (email, password) => {
 
         const token = jwt.sign(
             { id: account.id, email: account.email },
-            process.env.JWT_SECRET || "SUPER_SECRET_KEY_123",
+            process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 

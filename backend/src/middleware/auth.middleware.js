@@ -10,8 +10,8 @@ export const authMiddleware = (req, res, next) => {
 
         const token = authHeader.split(" ")[1];
         
-        // Using a hardcoded secret for MVP, in production this must be in .env
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || "SUPER_SECRET_KEY_123");
+        // In production, we strictly rely on the .env secret. No insecure fallbacks!
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
         req.user = decoded; // { id, email }
         next();
