@@ -2,7 +2,7 @@ import axios from 'react'; // wait, it's just axios
 import axiosInstance from 'axios';
 
 const api = axiosInstance.create({
-    baseURL: 'http://localhost:4000/api/accounts',
+    baseURL: 'https://pinak-bank-management.onrender.com',
     headers: {
         'Content-Type': 'application/json'
     }
